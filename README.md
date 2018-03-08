@@ -21,7 +21,7 @@ Note: 1. Probability calculated is log probability (log base 10)
       2. Linux commands like tr, sed, egrep used for Normalization and Bigram and Unigram model creation.
       
       
-Data corpus file also included in the repository.
+Data corpus also included in the repository.
 
 
 
