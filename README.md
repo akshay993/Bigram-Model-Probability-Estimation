@@ -26,6 +26,15 @@ Note:
 Data corpus also included in the repository.
 
 
+Files Included:
+1. 'DA.txt' is the Data Corpus
+2. 'unix_achopra6.txt' contains the commands for normaliation and bigram model creation
+3. 'lm_achopra6.pl' is the prolog code for Probability Estimation.
+4. 'bigram_achopra6.pl' and 'unigram_achopra6.pl' are the prolog readable bigram and unigram model created after running the commands from 'unix_achopra6.txt' file
+
+
+
+
 
 
 
