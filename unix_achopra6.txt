@@ -1,0 +1,120 @@
+#Following Steps are for Normalization and Unigram and Bigram Creation
+
+#Removing Capitalization
+tr 'A-Z' 'a-z' < DA.txt > Da_new.txt
+
+#Replacing % symbol with "a percentage"
+sed -E -i '' "s/\%/a percentage/g" Da_new.txt
+
+#Replacing m@ch@ with 'macha' , I@ with 'I' and gr@ce with 'grace'
+sed -E -i '' "s/m@ch@/macha/g" Da_new.txt
+sed -E -i '' "s/[iI]@/i /g" Da_new.txt
+sed -E -i '' "s/gr@ce/grace/g" Da_new.txt
+
+#Replacing 's which is followed by word ending in 'ed' with 'has'
+sed -E -i '' "s/([A-Za-z]+)\'s ([A-Za-z]+ed)/\1 has \2/g" Da_new.txt
+
+#Replace 's with 'is' for the other remaining 's
+sed -E -i '' "s/\'s/ is/g" Da_new.txt
+
+#Replace 'Can't' with 'Cannot', 'Won't' with 'Would not'
+sed -E -i '' "s/can\'t/cannot/g" Da_new.txt
+sed -E -i '' "s/won\'t/would not/g" Da_new.txt
+
+#Replace general negation words (having n't) with 'not' for various words like Don't, Doesn't etc
+sed -E -i '' "s/([A-Za-z]+)n\'t/\1 not/g" Da_new.txt
+
+#Replace 'll with 'will'
+sed -E -i '' "s/\'ll/ will/g" Da_new.txt
+
+#Replace 'm with 'am'
+sed -E -i '' "s/\'m/ am/g" Da_new.txt
+
+#Replace 'd with 'had'
+sed -E -i '' "s/\'d/ had/g" Da_new.txt
+
+#Replace 'em with 'them'
+sed -E -i '' "s/\'em/ them/g" Da_new.txt
+
+#Replace 're with 'are'
+sed -E -i '' "s/\'re/ are/g" Da_new.txt
+
+
+#Replace 've with 'have'
+sed -E -i '' "s/\'ve/ have/g" Da_new.txt
+
+#Replace ..." or ...." etc with single .
+sed -E -i '' "s/\.\.+\"/\./g" Da_new.txt
+
+#Remove ... or .... etc
+sed -E -i '' "s/\.\.+//g" Da_new.txt
+
+#Replace ??" or ???" etc with  ?"
+sed -E -i '' "s/\?\?+\"/?/g" Da_new.txt
+
+#Remove ?? or ??? etc
+sed -E -i '' "s/\?\?+//g" Da_new.txt
+
+#Replace !!" or !!!" etc with single !"
+sed -E -i '' "s/\!\!+\"/\!/g" Da_new.txt
+
+#Remove !! or !!!
+sed -E -i '' "s/\!\!+//g" Da_new.txt
+
+#Replace : " with @ since it is a sentence boundary in our data file
+sed -E -i '' "s/\: \"/ @ /g" Da_new.txt
+
+# Replace ," with @ since they can be sentence boundary
+sed -E -i '' "s/[\.\,\?\!]+ ?\"/ @ /g" Da_new.txt
+
+# Replace ", with @ since they can be sentence boundary
+sed -E -i '' "s/\"[\.\,\?\!]+/ @ /g" Da_new.txt
+
+#Replacing sentence boundary punctuation occurring in the middle
+#of sentence and end of line of sentence wit @
+#Ex: I am a boy. or Who are you? etc
+sed -E -i '' "s/[\.\?\!] / @ /g" Da_new.txt
+sed -E -i '' "s/[\.\?\!]$/ @ /g" Da_new.txt
+
+#Replace " followed by end of line with @ since it can be sentence boundary
+#EX: "I am the best" -> Here, after best" is end of line
+sed -E -i '' "s/\"$/ @ /g" Da_new.txt
+
+#Removing any other punctuations
+sed -E -i '' "s/[\.\!\,\"\?\*\(\)\|\:\;\'\-]//g" Da_new.txt
+
+#Replace '@ @' with '@'
+sed -E -i '' "s/@ @/@ /" Da_new.txt
+
+#Replace consecutive spaces with single space
+sed -E -i '' "s/ +/ /g" Da_new.txt
+
+#Replace '@ @' with '@'
+sed -E -i '' "s/@ @/@ /" Da_new.txt
+
+#Now, We create the Unigram and Bigram model which are prolog readable
+
+egrep -o "[a-z@]+" DA_new.txt  > unig1.txt
+
+tail -n+2 unig1.txt > unig2.txt
+
+paste unig1.txt unig2.txt > pairs.txt
+
+sort < pairs.txt | uniq -c | sort -n -r > bigrams.txt
+
+sed -i '' '$d' bigrams.txt
+
+#Unigram.pl file creation
+tr -sc "A-Za-z@" "\n" < unig1.txt |sort|uniq -c |sort -n -r > unigrams.txt
+sed -E "s/([0-9]+) ([a-z@ ]+)/unigram\(\1\,\2\)\./g" unigrams.txt > unigram_achopra6.pl
+
+#Bigram.pl file creation
+sed -E "s/([0-9]+)[[:space:]]([a-z@]+)[[:space:]]([a-z@ ]+)/bigram\(\1\,\2\,\3\)\./g" bigrams.txt > bigram_achopra6.pl
+
+#Remove Unnecessary Files
+rm -f unig1.txt
+rm -f unig2.txt
+rm -f pairs.txt
+rm -f unigrams.txt
+rm -f bigrams.txt
+rm -f Da_new.txt
