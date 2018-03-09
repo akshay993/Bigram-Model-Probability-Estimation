@@ -1,4 +1,4 @@
-# Bigram-Model-Probability-Estimation
+# Bigram-Model-Sentence-Probability-Estimation
 
 Construction of a Bigram Model in Prolog from a small Data Corpus and calculation of Probability of a word sequence using the model.
 
